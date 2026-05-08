@@ -1,337 +1,635 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distributivgesetz Übung</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- Babel (für JSX) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnostik: Kognitive Übergänge (Berlin)</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel (to compile JSX in the browser) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body>
-    <div id="root"></div>
+<body class="bg-slate-100">
+  <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-        // --- Icon Komponenten ---
-        const CheckIcon = ({ className, strokeWidth = 2 }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 6 9 17l-5-5"/></svg>
-        );
-        const XIcon = ({ className, strokeWidth = 2 }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-        );
-        const RefreshCwIcon = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        );
-        const CalculatorIcon = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
-        );
+    // --- ICON COMPONENTS (Lucide Replacements for standalone HTML) ---
+    const Settings = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+    );
+    const CheckCircle = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    );
+    const FileText = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+    );
+    const ChevronRight = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 18 15 12 9 6"/></svg>
+    );
+    const AlertTriangle = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    );
+    const BookOpen = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    );
+    const BrainCircuit = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.968-.524"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4"/><path d="M17.997 5.125A3 3 0 0 1 17.599 6.5"/><path d="M20.523 10.896a4 4 0 0 0-.585-.396"/><path d="M18 18a4 4 0 0 0 1.968-.524"/></svg>
+    );
 
-        // --- Logik ---
-        const VARS = ['x', 'y', 'a', 'b', 'm', 'n', 'p', 'q'];
+    // --- DATA & CONSTANTS ---
+    const SCHOOL_TYPES = [
+      { id: 'foe', label: 'Förderschule (Geistige Entwicklung / Lernen)' },
+      { id: 'gs', label: 'Grundschule' },
+      { id: 'ges', label: 'Gemeinschaftsschule / Gesamtschule' },
+      { id: 'iss', label: 'Integrierte Sekundarschule (ISS)' },
+      { id: 'gym', label: 'Gymnasium' }
+    ];
 
-        function getRandomInt(min, max, exclude = []) {
-          let num;
-          do {
-            num = Math.floor(Math.random() * (max - min + 1)) + min;
-          } while (exclude.includes(num));
-          return num;
+    const GRADES = {
+      'foe': ['Kl. 1', 'Kl. 2', 'JüL 1-2', 'JüL 1-3', 'Kl. 3', 'Kl. 4', 'Kl. 5', 'Kl. 6', 'Kl. 7', 'Kl. 8', 'Kl. 9', 'Kl. 10'],
+      'gs': ['Kl. 1', 'Kl. 2', 'JüL 1-2', 'JüL 1-3', 'Kl. 3', 'Kl. 4', 'Kl. 5', 'Kl. 6'],
+      'ges': ['Kl. 1', 'Kl. 2', 'JüL 1-2', 'JüL 1-3', 'Kl. 3', 'Kl. 4', 'Kl. 5', 'Kl. 6', 'Kl. 7', 'Kl. 8', 'Kl. 9', 'Kl. 10', 'Oberstufe (11-13)'],
+      'iss': ['Kl. 7', 'Kl. 8', 'Kl. 9', 'Kl. 10', 'Oberstufe (11-13)'],
+      'gym': ['Kl. 7', 'Kl. 8', 'Kl. 9', 'Kl. 10', 'Q-Phase (11/12)']
+    };
+
+    const COURSES = {
+      'iss_9_10': [{id: 'gk', label: 'Grundkurs (G)'}, {id: 'ek', label: 'Erweiterungskurs (E)'}],
+      'iss_oberstufe': [{id: 'gk', label: 'Grundkurs'}, {id: 'lk', label: 'Leistungskurs'}],
+      'gym_qphase': [{id: 'gk', label: 'Grundkurs'}, {id: 'lk', label: 'Leistungskurs'}]
+    };
+
+    const SCENARIOS_BY_EXPECTED_LEVEL = {
+      3: [
+        {
+          id: 'l3_1',
+          topic: 'L1: Zahlen & Operationen (Mengenerfassung)',
+          situation: 'Aufgabe: "Nimm dir 5 Plättchen aus der Schachtel." Wie geht die Mehrheit der Lerngruppe vor?',
+          options: [
+            { level: 1, text: 'Level 1: Die Lernenden reagieren nur basal auf das Material (z.B. greifen ungezielt in die Kiste), ohne Absicht einer Mengenzuordnung.' },
+            { level: 2, text: 'Level 2: Die Lernenden agieren intentional (schieben Plättchen hin und her), unterscheiden "viel/wenig", ordnen aber keine Zahlen zu.' },
+            { level: 3, text: 'Level 3: Die Lernenden erfassen Mengen intuitiv (sehen 2 oder 3 auf einen Blick), haben aber beim Abzählen von 5 noch keine sichere 1-zu-1-Zuordnung.' },
+            { level: 4, text: 'Level 4: Die Lernenden zählen starr ab (1, 2, 3, 4, 5). Sie nutzen die Zählprozedur, scheitern bei Ablenkung aber sofort, da die Menge nur als Vorgang, nicht als Konzept existiert.' }
+          ]
+        },
+        {
+          id: 'l3_2',
+          topic: 'L3: Raum & Form (Muster fortsetzen)',
+          situation: 'Aufgabe: Ein einfaches Farbmuster (z. B. Rot-Blau-Rot-Blau) mit Holzbausteinen nachbauen.',
+          options: [
+            { level: 1, text: 'Level 1: Reines Erkunden der Bausteine (Fühlen, Schmecken). Kein Nachbauen erkennbar.' },
+            { level: 2, text: 'Level 2: Die Lernenden hantieren ziellos mit den Bausteinen. Eine Absicht, dem Bauplan zu folgen, ist noch nicht erkennbar.' },
+            { level: 3, text: 'Level 3: Die Lernenden legen Steine an, achten dabei aber nur auf den direkten Nachbarn, sodass das Gesamtmuster oft schnell abbricht oder wechselt.' },
+            { level: 4, text: 'Level 4: Die Lernenden reihen Steine starr 1:1 exakt nach der sichtbaren Vorlage aneinander. Wenn ein Stein verdeckt wird, bricht die Logik ab.' }
+          ]
         }
-
-        function generateWorksheet() {
-          // 1. Einfache Klammern (10 Aufgaben): A * (Bx + C)
-          const signCombos = [
-            [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
-            [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1],
-            [Math.random() > 0.5 ? 1 : -1, Math.random() > 0.5 ? 1 : -1, Math.random() > 0.5 ? 1 : -1],
-            [Math.random() > 0.5 ? 1 : -1, Math.random() > 0.5 ? 1 : -1, Math.random() > 0.5 ? 1 : -1]
-          ];
-          signCombos.sort(() => Math.random() - 0.5);
-
-          const singleProblems = signCombos.map((signs, idx) => {
-            const aVal = getRandomInt(2, 9) * signs[0]; 
-            const bVal = getRandomInt(1, 9, [0]) * signs[1];
-            const cVal = getRandomInt(1, 9, [0]) * signs[2];
-            const v = VARS[Math.floor(Math.random() * VARS.length)];
-
-            return {
-              id: idx,
-              type: 'single',
-              a: aVal, b: bVal, c: cVal, v: v,
-              userAnswer: '', isChecked: false, isCorrect: null
-            };
-          });
-
-          // 2. Doppelte Klammern (5 Aufgaben): (Ax + B) * (Cx + D)
-          const doubleProblems = Array.from({ length: 5 }).map((_, idx) => {
-            const aVal = getRandomInt(1, 4, [0]) * (Math.random() > 0.8 ? -1 : 1);
-            const bVal = getRandomInt(-6, 6, [0]);
-            const cVal = getRandomInt(1, 4, [0]) * (Math.random() > 0.8 ? -1 : 1);
-            const dVal = getRandomInt(-6, 6, [0]);
-            const v = VARS[Math.floor(Math.random() * VARS.length)];
-
-            return {
-              id: 10 + idx,
-              type: 'double',
-              a: aVal, b: bVal, c: cVal, d: dVal, v: v,
-              userAnswer: '', isChecked: false, isCorrect: null
-            };
-          });
-
-          return [...singleProblems, ...doubleProblems];
+      ],
+      4: [
+        {
+          id: 'l4_1',
+          topic: 'L2: Größen & Messen (Sachrechnen Geld)',
+          situation: 'Aufgabe: "Du hast 10 Euro und kaufst ein Heft für 3 Euro. Wie viel Geld bekommst du zurück?"',
+          options: [
+            { level: 2, text: 'Level 2: Hantiert mit dem Spielgeld, versteht dass getauscht wird, aber Quantitäten/Rückgeld spielen keine Rolle.' },
+            { level: 3, text: 'Level 3: Weiß intuitiv, dass das Geld "weniger" wird, kann den Restbetrag aber nicht systematisch ermitteln.' },
+            { level: 4, text: 'Level 4: Zählt starr an den Fingern rückwärts (10, 9, 8, 7). Eine blinde Prozedur ohne Verständnis der Gesamtdifferenz.' },
+            { level: 5, text: 'Level 5: Ist zwingend darauf angewiesen, die Aufgabe mit Spielgeld physisch nachzulegen, um die Differenz handelnd zu ermitteln.' }
+          ]
+        },
+        {
+          id: 'l4_2',
+          topic: 'L4: Sachrechnen (Vervielfachen)',
+          situation: 'Aufgabe: "Ein Brötchen kostet 50 Cent. Wie viel kosten 3 Brötchen?"',
+          options: [
+            { level: 2, text: 'Level 2: Benennt vielleicht die Zahlen aus dem Text, kann sie aber in keine Lösungsstrategie übersetzen.' },
+            { level: 3, text: 'Level 3: Nimmt 3 Brötchen (oder Spielgeld) in die Hand, kann das "Dreimalige" aber nicht rechnerisch verknüpfen.' },
+            { level: 4, text: 'Level 4: Die Lernenden verknüpfen die Zahlen völlig willkürlich (z. B. 50 + 3 = 53), da die inhaltliche Multiplikations-Logik fehlt.' },
+            { level: 5, text: 'Level 5: Die Lernenden müssen die Situation zwingend handelnd darstellen: Sie legen dreimal jeweils eine 50-Cent-Münze vor sich hin und zählen diese zusammen.' }
+          ]
         }
-
-        function formatProblem(p) {
-          const formatBinomial = (coeff, constVal, v) => {
-            const cStr = coeff === 1 ? v : (coeff === -1 ? `-${v}` : `${coeff}${v}`);
-            const op = constVal > 0 ? '+' : '-';
-            const constAbs = Math.abs(constVal);
-            return `${cStr} ${op} ${constAbs}`;
-          };
-
-          if (p.type === 'single') {
-            return `${p.a}(${formatBinomial(p.b, p.c, p.v)})`;
-          } else {
-            return `(${formatBinomial(p.a, p.b, p.v)})(${formatBinomial(p.c, p.d, p.v)})`;
-          }
+      ],
+      5: [
+        {
+          id: 'l5_1',
+          topic: 'L1: Zahlen & Operationen (Zehnerübergang)',
+          situation: 'Aufgabe: "Berechne 8 + 7." Wie löst die Gruppe diese Aufgabe typischerweise?',
+          options: [
+            { level: 3, text: 'Level 3: Erfasst Mengen intuitiv (sieht dass 8 größer ist als 7), kann diese aber nicht zu einer neuen Menge kombinieren.' },
+            { level: 4, text: 'Level 4: Zählt mühsam einzeln ab (oft mit Fingern: 8, 9, 10...), verzählt sich dabei häufig durch fehlende Systematik.' },
+            { level: 5, text: 'Level 5: Ist zwingend darauf angewiesen, die Aufgabe mit Wendeplättchen am Zehnerfeld physisch nachzulegen.' },
+            { level: 6, text: 'Level 6: Benötigt kein physisches Material mehr. Eine kleine Skizze (Zahlenstrahl) oder das innerliche Vorstellen des Zehnerfelds als ikonischer Denkraum reicht aus.' }
+          ]
+        },
+        {
+          id: 'l5_2',
+          topic: 'L2: Größen & Messen (Flächeninhalt)',
+          situation: 'Aufgabe: "Berechne den Flächeninhalt eines rechteckigen Beetes (z. B. 4m x 3m)."',
+          options: [
+            { level: 3, text: 'Level 3: Erkennt, dass das Beet "groß" ist, hat aber kein Konzept von Flächenabmessungen.' },
+            { level: 4, text: 'Level 4: Die Lernenden addieren blind alle vorgegebenen Zahlen (Umfang statt Fläche) oder rechnen 4+3, da das Verständnis für die Flächendimension fehlt.' },
+            { level: 5, text: 'Level 5: Die Lernenden sind zwingend darauf angewiesen, das Beet physisch (z.B. mit Fliesen/Papier) auszulegen oder Kästchen einzeln abzuzählen.' },
+            { level: 6, text: 'Level 6: Die Lernenden zeichnen ein Raster auf und nutzen diese Skizze als Denkraum, um Zeilen/Spalten zu erkennen und die Multiplikation daraus abzuleiten.' }
+          ]
         }
+      ],
+      6: [
+        {
+          id: 'l6_1',
+          topic: 'L1: Zahlen & Operationen (Bruchteile)',
+          situation: 'Aufgabe: "Berechne zwei Drittel von 60 Euro."',
+          options: [
+            { level: 4, text: 'Level 4: Verknüpft die Zahlen willkürlich (z.B. 60+2+3), da Brüche als Konzept nicht existieren.' },
+            { level: 5, text: 'Level 5: Muss die 60 (z.B. Centstücke) zwingend physisch auf 3 Teller verteilen und dann 2 davon nehmen.' },
+            { level: 6, text: 'Level 6: Zeichnet ein Rechteck, teilt es in 3 Teile, notiert in jedem "20" und markiert 2 davon. Die Skizze ist der zwingende Denkraum.' },
+            { level: 7, text: 'Level 7: Übersetzt das Problem direkt in eine abstrakte Gleichung (60 : 3 * 2) und löst sie ohne Skizze.' }
+          ]
+        },
+        {
+          id: 'l6_2',
+          topic: 'L4: Gleichungen & Funktionen (Geometrie algebraisieren)',
+          situation: 'Aufgabe: "Ein Rechteck ist doppelt so lang wie breit. Der Umfang beträgt 30 cm. Wie lang sind die Seiten?"',
+          options: [
+            { level: 4, text: 'Level 4: Rechnet völlig willkürlich (z.B. 30:2), da der geometrisch-algebraische Zusammenhang komplett fehlt.' },
+            { level: 5, text: 'Level 5: Löst die Aufgabe rein über Probieren am konkreten Objekt (z.B. durch Zeichnen und Messen mit dem Lineal, bis es "zufällig" 30 ergibt).' },
+            { level: 6, text: 'Level 6: Muss zwingend eine Skizze zeichnen, um die Seiten mit "x" und "2x" zu beschriften. Das Gleichungsaufstellen geht nur durch "gedankliches Entlangwandern" am Rand.' },
+            { level: 7, text: 'Level 7: Benötigt keine Skizze mehr. Übersetzt den Text direkt in eine funktionale Gleichung (z.B. 2*(x + 2x) = 30) und operiert sicher im abstrakten Raum.' }
+          ]
+        }
+      ],
+      7: [
+        {
+          id: 'l7_1',
+          topic: 'L4: Gleichungen (Lineare Gleichungssysteme)',
+          situation: 'Aufgabe: "3 Erwachsene und 2 Kinder zahlen 40€. 1 Erwachsener und 4 Kinder zahlen 30€." Stellen Sie ein LGS auf und lösen Sie es.',
+          options: [
+            { level: 5, text: 'Level 5: Versucht die Situation mit konkreten Stellvertretern physisch nachzuspielen, scheitert aber an parallelen Bedingungen.' },
+            { level: 6, text: 'Level 6: Nutzt zwingend stark strukturierte Wertetabellen oder Pfeilbilder. Der direkte Sprung in ein formales System aus x und y überfordert das Abstraktionsvermögen.' },
+            { level: 7, text: 'Level 7: Übersetzt den Text zielsicher in ein abstraktes LGS (3x+2y=40) und wendet ein gelerntes formales Verfahren (z.B. Einsetzungsverfahren) mechanisch an.' },
+            { level: 8, text: 'Level 8: Reflektiert über das LGS, bevor stur gerechnet wird. Erkennt Relationen ("Gleichung 2 mal 3 nehmen, dann fällt x weg") und wählt aktiv das effizienteste Werkzeug aus.' }
+          ]
+        },
+        {
+          id: 'l7_2',
+          topic: 'L2: Trigonometrie',
+          situation: 'Aufgabe: In einem rechtwinkligen Dreieck sind Ankathete und Hypotenuse gegeben, der Winkel wird gesucht.',
+          options: [
+            { level: 5, text: 'Level 5: Zeichnet das Dreieck maßstabsgetreu und misst den Winkel mit dem Geodreieck aus. Der abstrakte Sinus/Kosinus wird umgangen.' },
+            { level: 6, text: 'Level 6: Ist auf eine Skizze zwingend angewiesen. Markiert die Seiten farbig, um visuell abzugleichen, welche Winkelfunktion passt. Ohne dieses Bild brechen sie ab.' },
+            { level: 7, text: 'Level 7: Entnimmt dem Text direkt die Eigenschaften (Gegenkathete fehlt). Eine Skizze wird höchstens unproportional "hingeschmiert". Die eigentliche Arbeit erfolgt sicher in der Formel.' },
+            { level: 8, text: 'Level 8: Nutzt die Trigonometrie fließend und schätzt Ergebnisse plausibel ab (z.B. "AK ist fast so lang wie HYP, also cos(x) nahe 1, Winkel muss sehr klein sein") als Reality-Check.' }
+          ]
+        }
+      ],
+      8: [
+        {
+          id: 'l8_1',
+          topic: 'L4: Analysis (Extremwertprobleme)',
+          situation: 'Aufgabe: "Modelliere eine Schachtel aus Pappe mit maximalem Volumen."',
+          options: [
+            { level: 6, text: 'Level 6: Nähert sich dem Problem empirisch-ikonisch. Fertigt Skizzen mit konkreten Zahlenwerten an und sucht das Maximum zeichnerisch über Wertetabellen oder Probieren.' },
+            { level: 7, text: 'Level 7: Übersetzt starr in Haupt- und Nebenbedingungen und spult den mechanischen Algorithmus (Zielfunktion bilden, Ableitung = 0) blind ab.' },
+            { level: 8, text: 'Level 8: Reflektiert den Prozess: Analysiert vorab den Definitionsbereich kritisch (Randwerte prüfen) und validiert das kalkül-generierte Ergebnis auf seine sachlogische Plausibilität.' },
+            { level: 9, text: 'Level 9: Verallgemeinert die Lösung auf unbekannte Formen (Scharparameter), kritisiert die Begrenzung des Modells und sichert Aussagen über globale Extrema durch abstrakte Beweise ab.' }
+          ]
+        },
+        {
+          id: 'l8_2',
+          topic: 'L5: Stochastik (Bedingte Wahrscheinlichkeit)',
+          situation: 'Aufgabe: Berechnung bedingter Wahrscheinlichkeiten in einem Sachkontext (z. B. Medizinischer Test).',
+          options: [
+            { level: 6, text: 'Level 6: Ist zwingend darauf angewiesen, die Situation ikonisch darzustellen (z.B. ein komplett beschriftetes Baumdiagramm zeichnen). Ohne die Zeichnung bricht der Ansatz zusammen.' },
+            { level: 7, text: 'Level 7: Übersetzt den Text zielsicher direkt in die abstrakte Bayes-Formel oder in sture Produktsummen. Skizzen werden kaum noch zur Berechnung gemacht.' },
+            { level: 8, text: 'Level 8: Reflektiert den Kontext: Erkennt typische Fehlschlüsse (z. B. Vertauschen von P(A|B) und P(B|A)) und kann die numerischen Ergebnisse sachlogisch kritisch interpretieren.' },
+            { level: 9, text: 'Level 9: Kann das Modell eigenständig erweitern (z.B. Hypothesentests aufbauen) und die Grenzen des Modells (Fehler 1. und 2. Art) systemisch hinterfragen.' }
+          ]
+        }
+      ]
+    };
 
-        function formatCorrectAnswer(p) {
-          let t2 = p.type === 'double' ? p.a * p.c : 0;
-          let t1 = p.type === 'double' ? (p.a * p.d + p.b * p.c) : (p.a * p.b);
-          let t0 = p.type === 'double' ? (p.b * p.d) : (p.a * p.c);
-          
-          let parts = [];
-          if (t2 !== 0) {
-            let term = '';
-            if (t2 === -1) term = '-';
-            else if (t2 !== 1) term = t2.toString();
-            term += `${p.v}^2`;
-            parts.push(term);
-          }
-          if (t1 !== 0) {
-            let term = '';
-            if (t1 === -1) term = '-';
-            else if (t1 !== 1) term = Math.abs(t1).toString();
-            term += p.v;
+    const CONSTRAINTS = [
+      { id: 'c_visuo', text: 'Strukturierungsschwäche: Fällt es Teilen der Gruppe merklich schwer, Tabellen anzulegen oder Rechenwege räumlich sauber untereinander zu notieren, was häufig zu Folgefehlern führt?' },
+      { id: 'c_speed', text: 'Arbeitsgedächtnis/Bottleneck: Bricht der Rechenprozess bei komplexen mehrschrittigen Aufgaben ab, weil Lernende nach einer Nebenrechnung das eigentliche Hauptziel vergessen haben?' },
+      { id: 'c_lang', text: 'Sprachbarriere: Ist das Übersetzen von Textaufgaben primär durch mangelndes Leseverständnis gehemmt (nicht durch fehlende mathematische Logik)?' }
+    ];
+
+    // Helper: Berechnet das curriculare Erwartungslevel
+    function getExpectedLevel(school, grade, course) {
+      if (school === 'foe') {
+        if (['Kl. 1', 'Kl. 2', 'JüL 1-2', 'JüL 1-3'].includes(grade)) return 3;
+        if (['Kl. 3', 'Kl. 4'].includes(grade)) return 4;
+        if (['Kl. 5', 'Kl. 6', 'Kl. 7', 'Kl. 8'].includes(grade)) return 5;
+        if (['Kl. 9', 'Kl. 10'].includes(grade)) return 6;
+      }
+      if (school === 'gs') {
+        if (['Kl. 1', 'JüL 1-2'].includes(grade)) return 3;
+        if (['Kl. 2', 'JüL 1-3'].includes(grade)) return 4;
+        if (['Kl. 3', 'Kl. 4'].includes(grade)) return 5;
+        if (['Kl. 5', 'Kl. 6'].includes(grade)) return 6;
+      }
+      if (['iss', 'ges'].includes(school)) {
+        if (['Kl. 1', 'JüL 1-2'].includes(grade)) return 3;
+        if (['Kl. 2', 'JüL 1-3'].includes(grade)) return 4;
+        if (['Kl. 3', 'Kl. 4'].includes(grade)) return 5;
+        if (['Kl. 5', 'Kl. 6', 'Kl. 7', 'Kl. 8'].includes(grade)) return 6;
+        if (['Kl. 9', 'Kl. 10'].includes(grade)) return course === 'ek' ? 7 : 6;
+        if (['Oberstufe (11-13)'].includes(grade)) return course === 'lk' ? 8 : 7;
+      }
+      if (school === 'gym') {
+        if (['Kl. 7'].includes(grade)) return 6;
+        if (['Kl. 8', 'Kl. 9'].includes(grade)) return 7;
+        if (['Kl. 10'].includes(grade)) return 8;
+        if (['Q-Phase (11/12)'].includes(grade)) return 8; 
+      }
+      return 5; 
+    }
+
+    function App() {
+      const [view, setView] = useState('setup'); 
+      const [schoolType, setSchoolType] = useState('gs');
+      const [grade, setGrade] = useState('Kl. 3');
+      const [course, setCourse] = useState(null);
+      
+      const [answers, setAnswers] = useState({});
+      const [constraintAnswers, setConstraintAnswers] = useState({});
+
+      useEffect(() => {
+        setGrade(GRADES[schoolType][0]);
+        setCourse(null);
+      }, [schoolType]);
+
+      const expectedLevel = getExpectedLevel(schoolType, grade, course);
+      const activeScenarios = SCENARIOS_BY_EXPECTED_LEVEL[expectedLevel] || SCENARIOS_BY_EXPECTED_LEVEL[5];
+
+      const needsCourseSelection = () => {
+        if (['iss', 'ges'].includes(schoolType) && ['Kl. 9', 'Kl. 10'].includes(grade)) return 'iss_9_10';
+        if (['iss', 'ges'].includes(schoolType) && grade === 'Oberstufe (11-13)') return 'iss_oberstufe';
+        if (schoolType === 'gym' && grade === 'Q-Phase (11/12)') return 'gym_qphase';
+        return null;
+      };
+
+      const courseOptionsId = needsCourseSelection();
+
+      const handleLevelSelect = (scenarioId, level) => {
+        setAnswers(prev => ({ ...prev, [scenarioId]: level }));
+      };
+
+      const handleConstraintSelect = (cId, value) => {
+        setConstraintAnswers(prev => ({ ...prev, [cId]: value }));
+      };
+
+      const canStartAssessment = () => {
+        if (courseOptionsId && !course) return false;
+        return true;
+      };
+
+      const isComplete = () => {
+        const questionsAnswered = activeScenarios.every(s => answers[s.id] !== undefined);
+        const constraintsAnswered = CONSTRAINTS.every(c => constraintAnswers[c.id] !== undefined);
+        return questionsAnswered && constraintsAnswered;
+      };
+
+      const evaluateResults = () => {
+        const selectedLevels = Object.values(answers);
+        const sum = selectedLevels.reduce((a, b) => a + b, 0);
+        const avg = sum / selectedLevels.length;
+        const dominantLevel = Math.round(avg);
+        
+        const minLevel = Math.min(...selectedLevels);
+        const maxLevel = Math.max(...selectedLevels);
+
+        const activeConstraints = CONSTRAINTS.filter(c => constraintAnswers[c.id] === 'yes');
+
+        return { dominantLevel, minLevel, maxLevel, activeConstraints };
+      };
+
+      const renderSetup = () => (
+        <div className="animate-in fade-in space-y-6">
+          <div className="bg-slate-50 p-6 sm:p-8 rounded-2xl border border-slate-200">
+            <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-3">
+              <Settings className="text-blue-600" size={28} /> 
+              Schritt 1: Curriculare Basislinie
+            </h2>
+            <p className="text-slate-600 mb-6 leading-relaxed">
+              Wählen Sie Schulform, Klasse und ggf. das Kursniveau aus. Das Tool errechnet daraus den Erwartungshorizont und generiert Fragen, die <strong>bewusst bis zu zwei kognitive Level unter diesem Erwartungswert starten</strong>, um auch massive Förderbedarfe abzubilden.
+              <br /><br />
+              <span className="font-bold text-blue-900 bg-blue-100 px-2 py-1 rounded">Wichtig:</span> Es geht hier nicht um Faktenwissen, sondern um das <strong>kognitive Herangehen</strong>. Falls ein Thema noch nicht behandelt wurde, antizipieren Sie: <em>Wie erwarten Sie, dass Ihre Lerngruppe diese Aufgabe intuitiv angehen würde?</em>
+            </p>
             
-            if (parts.length > 0) {
-              parts.push(t1 > 0 ? '+ ' + term : '- ' + term.replace('-', ''));
-            } else {
-              parts.push(t1 > 0 ? term : '-' + term);
-            }
-          }
-          if (t0 !== 0) {
-            if (parts.length > 0) {
-              parts.push(t0 > 0 ? '+ ' + t0 : '- ' + Math.abs(t0));
-            } else {
-              parts.push(t0.toString());
-            }
-          }
-          return parts.join(' ');
-        }
+            <div className="space-y-6 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <label className="block text-sm font-bold tracking-wide uppercase text-slate-500 mb-2">1. Schulform</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {SCHOOL_TYPES.map(s => (
+                    <button
+                      key={s.id}
+                      onClick={() => setSchoolType(s.id)}
+                      className={`py-3 px-4 rounded-xl font-bold border-2 text-left transition-all ${
+                        schoolType === s.id ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-sm' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-        // Neue mathematische Überprüfung: Wertet die Funktion für zufällige x-Werte aus!
-        function validateAnswer(userInput, p) {
-          // Unterbinde runde Klammern in der Eingabe (zwingt zum Ausmultiplizieren)
-          if (userInput.includes('(') || userInput.includes(')')) return false;
+              <div>
+                <label className="block text-sm font-bold tracking-wide uppercase text-slate-500 mb-2">2. Klassenstufe</label>
+                <div className="flex flex-wrap gap-2">
+                  {GRADES[schoolType].map(g => (
+                    <button
+                      key={g}
+                      onClick={() => { setGrade(g); setCourse(null); }}
+                      className={`py-2 px-4 rounded-lg font-semibold border-2 transition-all ${
+                        grade === g ? 'border-blue-600 bg-blue-600 text-white shadow-sm' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                      }`}
+                    >
+                      {g}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          let clean = userInput.replace(/\s+/g, '').replace(/\+-/g, '-');
-          
-          // Nur erlaubte Zeichen durchlassen
-          const varEscaped = p.v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          const allowed = new RegExp(`^[0-9\\+\\-\\*\\/\\^${varEscaped}]+$`);
-          if (!allowed.test(clean)) return false;
-
-          // Exponentiation und implizite Multiplikation für JS lesbar machen
-          let expr = clean.replace(/\^/g, '**');
-          expr = expr.replace(new RegExp(`(\\d)(${varEscaped})`, 'g'), '$1*$2');
-
-          // Wir testen zwei x-Werte, um Zufallstreffer auszuschließen
-          const testPoints = [2.5, -3.2];
-
-          for (let x of testPoints) {
-            const evalExpr = expr.replace(new RegExp(varEscaped, 'g'), `(${x})`);
-            let userResult;
-            try {
-              // Führe den bereinigten String mathematisch aus
-              userResult = Function(`"use strict"; return (${evalExpr});`)();
-            } catch (e) {
-              return false; // Bei Syntaxfehlern im String (z.B. x^ oder ++)
-            }
-
-            let targetResult = p.type === 'single' 
-                ? p.a * (p.b * x + p.c) 
-                : (p.a * x + p.b) * (p.c * x + p.d);
-
-            // Toleranz für kleine Rundungsfehler bei Floats
-            if (Math.abs(userResult - targetResult) > 0.0001) {
-              return false;
-            }
-          }
-          return true;
-        }
-
-        // --- Hauptkomponente ---
-        function App() {
-          const [problems, setProblems] = useState([]);
-
-          const checkedCount = problems.filter(p => p.isChecked).length;
-          const score = problems.filter(p => p.isCorrect).length;
-          const totalProbs = problems.length;
-          const allChecked = totalProbs > 0 && checkedCount === totalProbs;
-
-          useEffect(() => {
-            setProblems(generateWorksheet());
-          }, []);
-
-          const handleInput = (id, val) => {
-            setProblems(probs => probs.map(p => p.id === id ? { ...p, userAnswer: val } : p));
-          };
-
-          const handleCheckSingle = (id) => {
-            setProblems(probs => probs.map(p => {
-              if (p.id === id && p.userAnswer.trim() !== '') {
-                const correct = validateAnswer(p.userAnswer, p);
-                return { ...p, isChecked: true, isCorrect: correct };
-              }
-              return p;
-            }));
-          };
-
-          const handleKeyDown = (e, id, userAnswer) => {
-            if (e.key === 'Enter' && userAnswer.trim() !== '') {
-              handleCheckSingle(id);
-            }
-          };
-
-          const handleReset = () => {
-            setProblems(generateWorksheet());
-          };
-
-          return (
-            <div className="min-h-screen bg-slate-100 py-6 px-4 sm:py-10 font-sans text-slate-800">
-              <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-                
-                {/* Header */}
-                <div className="bg-gradient-to-r from-blue-700 to-indigo-600 p-6 sm:p-8 text-white text-center">
-                  <div className="flex justify-center mb-3">
-                    <CalculatorIcon className="w-10 h-10 text-blue-200" />
+              {courseOptionsId && (
+                <div className="animate-in fade-in slide-in-from-top-2">
+                  <label className="block text-sm font-bold tracking-wide uppercase text-slate-500 mb-2">3. Kursniveau</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {COURSES[courseOptionsId].map(c => (
+                      <button
+                        key={c.id}
+                        onClick={() => setCourse(c.id)}
+                        className={`py-3 px-4 rounded-xl font-bold border-2 transition-all ${
+                          course === c.id ? 'border-amber-500 bg-amber-50 text-amber-700 shadow-sm' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                        }`}
+                      >
+                        {c.label}
+                      </button>
+                    ))}
                   </div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold mb-2 tracking-tight">
-                    Distributivgesetz & Vorzeichen
-                  </h1>
-                  <p className="text-blue-100 sm:text-lg max-w-xl mx-auto">
-                    Multipliziere die Klammern aus. Achte dabei besonders auf die Vorzeichenregeln!
-                    <span className="block mt-3 text-sm font-medium bg-blue-800/30 py-2 px-3 rounded-lg">
-                      <b>Tipp:</b> Für Quadrate (z. B. x²) tippe einfach <b>x^2</b> ein.<br/> 
-                      Doppelte Klammern musst du nicht zwingend zusammenfassen.
-                    </span>
+                </div>
+              )}
+
+              <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-3">
+                 <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-black flex items-center justify-center text-lg">{expectedLevel}</div>
+                 <div className="text-sm text-slate-600">
+                   <strong>Erwarteter Ziel-Level im Lehrplan: {expectedLevel}</strong><br/>
+                   Diagnostik wird für die Level {Math.max(1, expectedLevel - 2)} bis {Math.min(10, expectedLevel + 1)} generiert.
+                 </div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => { setAnswers({}); setConstraintAnswers({}); setView('assessment'); }}
+            disabled={!canStartAssessment()}
+            className={`w-full py-5 rounded-xl font-bold text-lg shadow-md transition-all flex justify-center items-center gap-2 group ${
+              canStartAssessment() ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer' : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+            }`}
+          >
+            Lernstandsdiagnostik starten 
+            {canStartAssessment() && <ChevronRight className="group-hover:translate-x-1 transition-transform" size={24} />}
+          </button>
+        </div>
+      );
+
+      const renderAssessment = () => {
+        return (
+          <div className="animate-in slide-in-from-right-4 space-y-8">
+            <div className="border-b border-slate-200 pb-4">
+              <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                <BrainCircuit className="text-blue-600" />
+                Diagnostik kognitiver Übergänge
+              </h2>
+              <p className="text-slate-500 mt-2">
+                Wählen Sie pro Szenario die Strategie aus, die das Handeln der <strong>Mehrheit</strong> Ihrer Lerngruppe am ehesten beschreibt (bzw. antizipiert beschreiben würde). 
+              </p>
+            </div>
+
+            {activeScenarios.map((scenario, idx) => (
+              <div key={scenario.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-slate-50 p-5 border-b border-slate-200">
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-1 block">Szenario {idx + 1} • {scenario.topic}</span>
+                  <p className="text-slate-800 font-medium text-lg leading-relaxed">{scenario.situation}</p>
+                </div>
+                
+                <div className="p-5 space-y-3">
+                  {scenario.options.map((opt, oIdx) => (
+                    <button
+                      key={oIdx}
+                      onClick={() => handleLevelSelect(scenario.id, opt.level)}
+                      className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-start gap-3 ${
+                        answers[scenario.id] === opt.level
+                          ? 'border-blue-600 bg-blue-50/50'
+                          : 'border-slate-100 bg-white hover:border-slate-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        answers[scenario.id] === opt.level ? 'border-blue-600' : 'border-slate-300'
+                      }`}>
+                        {answers[scenario.id] === opt.level && <div className="w-2.5 h-2.5 bg-blue-600 rounded-full" />}
+                      </div>
+                      <p className={`text-sm md:text-base leading-relaxed ${answers[scenario.id] === opt.level ? 'text-blue-900 font-medium' : 'text-slate-600'}`}>
+                        {opt.text}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <div className="space-y-6 pt-6 border-t-2 border-dashed border-slate-200">
+              <h3 className="font-bold text-xl text-slate-800 flex items-center gap-2">
+                <AlertTriangle className="text-amber-500" /> Domänenübergreifende Einschränkungen
+              </h3>
+              
+              <div className="grid gap-4">
+                {CONSTRAINTS.map(c => (
+                  <div key={c.id} className="bg-amber-50/50 p-4 rounded-xl border border-amber-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <p className="text-slate-700 text-sm md:text-base font-medium flex-1">{c.text}</p>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => handleConstraintSelect(c.id, 'no')}
+                        className={`px-4 py-2 text-sm font-bold rounded-lg border-2 transition-colors ${
+                          constraintAnswers[c.id] === 'no' ? 'bg-slate-700 text-white border-slate-700' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                        }`}
+                      >
+                        Nein
+                      </button>
+                      <button
+                        onClick={() => handleConstraintSelect(c.id, 'yes')}
+                        className={`px-4 py-2 text-sm font-bold rounded-lg border-2 transition-colors ${
+                          constraintAnswers[c.id] === 'yes' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-amber-600 border-amber-200 hover:bg-amber-100'
+                        }`}
+                      >
+                        Ja, zutreffend
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <button
+                onClick={() => setView('setup')}
+                className="flex-1 py-4 bg-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-300 transition-colors"
+              >
+                Zurück zur Auswahl
+              </button>
+              <button
+                onClick={() => setView('result')}
+                disabled={!isComplete()}
+                className={`flex-1 py-4 rounded-xl font-bold text-lg transition-all flex justify-center items-center gap-2 ${
+                  isComplete() 
+                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-200' 
+                    : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                }`}
+              >
+                Didaktisches Profil auswerten <CheckCircle size={20} />
+              </button>
+            </div>
+          </div>
+        );
+      };
+
+      const renderResult = () => {
+        const { dominantLevel, minLevel, maxLevel, activeConstraints } = evaluateResults();
+        
+        const levelTitles = {
+          1: 'Level 1: Basal-perzeptiv',
+          2: 'Level 2: Intentional-partizipativ',
+          3: 'Level 3: Pränumerische Größenunterscheidung',
+          4: 'Level 4: Zählprozeduren & Vor-Systematik',
+          5: 'Level 5: Konkret-handelnd (enaktiv)',
+          6: 'Level 6: Bildhaft-darstellend (ikonisch)',
+          7: 'Level 7: Abstrakt-symbolisch (Werkzeugnutzung)',
+          8: 'Level 8: Formal-analytisch (Strukturreflexion)',
+          9: 'Level 9: Heuristisch-generativ (Transfer)'
+        };
+
+        const isBelowExpectation = dominantLevel < expectedLevel;
+
+        return (
+          <div className="animate-in zoom-in-95 duration-500 space-y-8">
+            
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
+              <div className="bg-slate-900 p-8 text-center text-white relative">
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                  <BrainCircuit size={120} />
+                </div>
+                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3 relative z-10">Ermitteltes operatives Kognitionsniveau</h2>
+                <div className="text-7xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-emerald-400 relative z-10">
+                  Level {dominantLevel}
+                </div>
+                <div className="text-xl sm:text-2xl font-medium text-slate-300 relative z-10">{levelTitles[dominantLevel] || `Level ${dominantLevel}`}</div>
+                
+                {isBelowExpectation && (
+                   <div className="mt-4 bg-amber-500/20 text-amber-200 py-2 px-4 rounded-lg text-sm inline-block font-semibold">
+                     Achtung: Die Lerngruppe agiert {expectedLevel - dominantLevel} Level unter dem curricularen Standard (L{expectedLevel}).
+                   </div>
+                )}
+
+                {minLevel !== maxLevel && (
+                  <div className="mt-6 pt-4 border-t border-slate-800 text-sm text-slate-400">
+                    Heterogenität: Lösungsstrategien streuen in der Klasse zwischen Level {minLevel} und {maxLevel}.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-6 sm:p-8 rounded-2xl border border-blue-100 shadow-sm relative">
+              <div className="absolute top-0 right-0 p-6 opacity-5">
+                <BookOpen size={100} className="text-blue-900" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2 relative z-10">
+                Materialgestaltung & Differenzierung 
+              </h3>
+              
+              <div className="space-y-8 relative z-10">
+                
+                <div className="bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+                  <h4 className="font-bold text-blue-900 mb-3 text-lg flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-600"></div> Didaktischer Kernfokus
+                  </h4>
+                  <p className="text-slate-700 leading-relaxed text-lg">
+                    {dominantLevel <= 3 && "Massiver Förderbedarf in der Pränumerik: Die SuS sind noch dabei, das Mengen- und Operationsverständnis aufzubauen. Fokussieren Sie auf basale Alltagsbezüge und das handgreifliche Be-Greifen von 'mehr', 'weniger' und 'gleich'. Formale Zahlen und Rechenzeichen (wie + und -) sind hier oft noch leere Symbole."}
+                    
+                    {dominantLevel === 4 && "Übergangsphase zur Mengenerfassung: Die SuS zählen oft noch stark abzählend (mit Fingern). Der Fokus liegt nun darauf, zählende Strategien abzulösen. Üben Sie intensiv das strukturierte Legen von Material (Zehnerfeld) und das blitzartige simultane Erfassen kleiner Mengen (Subitizing)."}
+                    
+                    {dominantLevel === 5 && "Vorsicht bei Abstraktionen! Die SuS benötigen zwingend die Rückübersetzung formaler Aufgaben in greifbare Handlungen. Bevor formale Rechenregeln (wie Zehnerübergang, Brüche oder Gleichungsumformungen) geübt werden, müssen diese mit konkretem Material (Wendeplättchen, Bruchrechenkreise, Spielgeld, Waagemodell) haptisch verstanden sein."}
+                    
+                    {dominantLevel === 6 && "Ihre Lerngruppe benötigt zwingend die 'Ikonische Brücke'. Strukturieren Sie Arbeitsblätter stark bildhaft (Streckenmodelle, Baumdiagramme, Skizzen). Ermutigen Sie die SuS, Sachaufgaben zuerst exakt in eine Zeichnung zu übersetzen und am Bild zu rechnen, bevor sie eine formale Gleichung aufstellen. Der Verzicht auf die Skizze führt schnell zum Abbruch."}
+                    
+                    {dominantLevel === 7 && "Die SuS nutzen die formale Mathematik bereits abstrakt als Werkzeug. Reine 'Päckchenrechnungen' unterfordern diese Kompetenz. Fokus auf Mathematisierungsprozesse: Geben Sie 'unaufgeräumte' Sachsituationen vor und trainieren Sie gezielt das Aufstellen formaler Gleichungsmodelle. Skizzen werden hier flexibel (z. B. als kurzer Reality-Check) genutzt."}
+                    
+                    {dominantLevel === 8 && "Die Lerngruppe operiert sicher abstrakt. Nutzen Sie komplexe Formate zur Strukturreflexion: Lassen Sie fehlerhafte Lösungswege analysieren, vergleichen Sie die Effizienz von Algorithmen (z.B. Einsetzungs- vs. Additionsverfahren) und fordern Sie mathematische Begründungen, Plausibilitätsprüfungen und Argumentationen ein."}
+
+                    {dominantLevel >= 9 && "Exzellentes Abstraktionsniveau. Die Lerngruppe sollte mit offenen Modellierungs- und Beweisaufgaben konfrontiert werden. Das bloße Abarbeiten bekannter Schemata unterfordert sie. Fordern Sie Verallgemeinerungen (z.B. Arbeit mit Scharparametern) und eigenständige Herleitungen von Axiomen."}
                   </p>
                 </div>
 
-                {/* Aufgabenliste */}
-                <div className="p-4 sm:p-8 space-y-4">
-                  {problems.map((p, index) => (
-                    <div 
-                      key={p.id} 
-                      className={`flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 rounded-xl border-2 transition-colors
-                        ${p.isChecked && p.isCorrect ? 'bg-green-50/50 border-green-100' : 
-                          p.isChecked && !p.isCorrect ? 'bg-red-50/50 border-red-100' : 'bg-slate-50 border-transparent hover:border-slate-200'}`}
-                    >
-                      
-                      <div className="text-lg font-medium flex items-center gap-3 w-full md:w-5/12">
-                        <span className="text-slate-400 font-bold w-6">{index + 1}.</span>
-                        <span className="font-mono text-xl tracking-wide select-all">
-                          {formatProblem(p)} =
-                        </span>
-                      </div>
-                      
-                      <div className="flex-1 flex flex-col gap-1 w-full md:w-7/12">
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="text"
-                            value={p.userAnswer}
-                            onChange={(e) => handleInput(p.id, e.target.value)}
-                            onKeyDown={(e) => handleKeyDown(e, p.id, p.userAnswer)}
-                            disabled={p.isChecked}
-                            placeholder={p.type === 'single' ? `z.B. 4${p.v} - 7` : `z.B. 2${p.v}^2 + 5${p.v} - 3`}
-                            className={`flex-1 w-full font-mono text-lg px-4 py-2 border-2 rounded-lg outline-none transition-all
-                              ${!p.isChecked ? 'border-slate-300 focus:border-indigo-500 bg-white shadow-sm' :
-                                p.isCorrect ? 'border-green-500 bg-green-50 text-green-900' : 'border-red-500 bg-red-50 text-red-900'}`}
-                          />
-                          {!p.isChecked ? (
-                            <button
-                              onClick={() => handleCheckSingle(p.id)}
-                              disabled={p.userAnswer.trim() === ''}
-                              className="px-4 py-2 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold transition-colors"
-                            >
-                              Prüfen
-                            </button>
-                          ) : (
-                            p.isCorrect 
-                              ? <CheckIcon className="text-green-600 w-7 h-7 flex-shrink-0" strokeWidth={3} /> 
-                              : <XIcon className="text-red-600 w-7 h-7 flex-shrink-0" strokeWidth={3} />
-                          )}
+                {activeConstraints.length > 0 && (
+                  <div>
+                    <h4 className="font-bold text-amber-900 mb-3 text-lg border-b border-amber-200 pb-2">Erforderliche Nachteilsausgleiche</h4>
+                    <div className="grid gap-3">
+                      {activeConstraints.map(c => (
+                        <div key={c.id} className="bg-amber-50 p-4 rounded-lg border border-amber-200 flex gap-3 items-start">
+                          <AlertTriangle className="text-amber-500 flex-shrink-0 mt-0.5" size={20} />
+                          <p className="text-amber-900 leading-relaxed">
+                            {c.id === 'c_visuo' && "Visueller Nachteilsausgleich: Nutzen Sie größere Karos (z. B. 7mm), geben Sie Gitternetze für Schrägbilder vor und reduzieren Sie die Informationsdichte auf Arbeitsblättern massiv (viel Weißraum)."}
+                            {c.id === 'c_speed' && "Arbeitsgedächtnis entlasten: Unterteilen Sie komplexe Aufgabenstrukturen (wie Strahlensätze, Textaufgaben) in explizite Teilschritte (a, b, c). Geben Sie Zwischenergebnisse zur Selbstkontrolle an, damit der 'rote Faden' nicht reißt."}
+                            {c.id === 'c_lang' && "Sprachsensibler Mathematikunterricht: Reduzieren Sie narrative Ausschmückungen in Sachaufgaben drastisch. Nutzen Sie Scaffolding (Vokabellisten für z. B. 'verdoppelt', 'Rabatt') und koppeln Sie Textangaben stets an visuelle Anker."}
+                          </p>
                         </div>
-                        
-                        {/* Anzeige der richtigen Lösung bei Fehler */}
-                        {p.isChecked && !p.isCorrect && (
-                          <div className="text-sm text-red-600 font-medium ml-1 mt-1 flex items-center">
-                            Richtige Lösung: <span className="font-mono ml-2 bg-red-100 px-2 py-0.5 rounded">{formatCorrectAnswer(p)}</span>
-                          </div>
-                        )}
-                      </div>
-
+                      ))}
                     </div>
-                  ))}
-                </div>
-
-                {/* Footer / Controls */}
-                <div className="bg-slate-50 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-slate-200">
-                  
-                  <div className="w-full sm:w-auto text-center sm:text-left">
-                    {allChecked ? (
-                      <div className="text-xl font-bold">
-                        Endergebnis: {' '}
-                        <span className={score === totalProbs ? 'text-green-600' : score >= (totalProbs / 2) ? 'text-indigo-600' : 'text-red-600'}>
-                          {score} von {totalProbs}
-                        </span> richtig!
-                      </div>
-                    ) : (
-                      <div className="text-slate-500 font-medium">
-                        Fortschritt: {checkedCount} / {totalProbs} Aufgaben überprüft.<br/>
-                        <span className="text-sm">Löse die Aufgaben und drücke Enter oder klicke auf "Prüfen".</span>
-                      </div>
-                    )}
                   </div>
-
-                  <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-3">
-                    <button
-                      onClick={handleReset}
-                      className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
-                    >
-                      <RefreshCwIcon className="w-5 h-5" />
-                      Neues Übungsblatt
-                    </button>
-                  </div>
-
-                </div>
+                )}
               </div>
             </div>
-          );
-        }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <button
+                onClick={() => setView('assessment')}
+                className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-700 rounded-xl font-bold hover:border-slate-300 hover:bg-slate-50 transition-all"
+              >
+                Eingaben anpassen
+              </button>
+              <button
+                onClick={() => { setView('setup'); setAnswers({}); setConstraintAnswers({}); setCourse(null); }}
+                className="flex-1 py-4 bg-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-300 transition-colors"
+              >
+                Neue Diagnostik starten
+              </button>
+            </div>
+          </div>
+        );
+      };
+
+      return (
+        <div className="min-h-screen py-10 px-4 sm:px-6 font-sans text-slate-900">
+          <div className="max-w-3xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2 text-center">Diagnostik: Kognitive Übergänge</h1>
+            <p className="text-slate-500 text-center mb-10 text-lg">Ein Instrument zur theoriegeleiteten Materialdifferenzierung im Fachbereich Mathematik</p>
+
+            {view === 'setup' && renderSetup()}
+            {view === 'assessment' && renderAssessment()}
+            {view === 'result' && renderResult()}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>
